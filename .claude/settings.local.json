@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" auth status)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/pages -X POST -f build_type=workflow -f source.branch=main -f source.path=\"/\")",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/pages -X PUT -f build_type=legacy -f source.branch=main -f source.path=\"/\")",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/pages)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/pages -X PUT -f build_type=legacy -f source='{\"\"branch\"\":\"\"main\"\",\"\"path\"\":\"\"/\"\"}')",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" run list --repo arkoannuk/saashalve --limit 3)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo edit arkoannuk/saashalve --visibility private)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo edit arkoannuk/saashalve --visibility private --accept-visibility-change-consequences)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo edit arkoannuk/saashalve --visibility public --accept-visibility-change-consequences)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" run view 23693738310 --repo arkoannuk/saashalve --log-failed)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/pages -X POST -f build_type=workflow -f source='{\"\"branch\"\":\"\"main\"\",\"\"path\"\":\"\"/\"\"}')",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/pages -X POST --input - 2)",
+      "Bash(1:*)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" workflow run pages.yml --repo arkoannuk/saashalve --ref main)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" run list --repo arkoannuk/saashalve --limit 1)",
+      "Bash(git reset:*)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" run list --repo arkoannuk/saashalve)",
+      "Bash(for id:*)",
+      "Bash(do \"/c/Program Files/GitHub CLI/gh.exe\" run delete \"$id\" --repo arkoannuk/saashalve)",
+      "Bash(done)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/actions/runs --jq '.workflow_runs[] | \"\"\\\\\\(.id\\) \\\\\\(.status\\) \\\\\\(.conclusion\\) \\\\\\(.display_title\\)\"\"')",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve --jq '{visibility: .visibility, fork: .allow_forking, private: .private, default_branch_protection: .default_branch}')",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/collaborators)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/arkoannuk/saashalve/branches/main/protection)"
+    ]
+  }
+}

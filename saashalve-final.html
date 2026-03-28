@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saashälve — Eesti Saashälvikute Anonüümsed</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f0e8;
+    --bg-dark: #e8e2d6;
+    --text: #2c2416;
+    --accent: #8b1a1a;
+    --accent-light: #b83232;
+    --muted: #6b5d4f;
+    --card-bg: #fffdf7;
+    --warning: #c4942a;
+    --shadow: rgba(44, 36, 22, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 60px 0 40px;
+    border-bottom: 3px double var(--accent);
+    margin-bottom: 50px;
+    position: relative;
+  }
+
+  header::before {
+    content: '⚠';
+    display: block;
+    font-size: 48px;
+    margin-bottom: 16px;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
+  }
+
+  .org-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 8vw, 68px);
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1.05;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+
+  .subtitle {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 19px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .est-date {
+    margin-top: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* Warning banner */
+  .warning-banner {
+    background: var(--accent);
+    color: #f4f0e8;
+    text-align: center;
+    padding: 14px 24px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .warning-banner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    animation: shimmer 4s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* Sections */
+  section {
+    margin-bottom: 50px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--bg-dark);
+  }
+
+  h2 .number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 2px;
+  }
+
+  p { margin-bottom: 16px; }
+
+  /* Stats grid */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 30px 0;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--bg-dark);
+    padding: 24px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+
+  .stat-card:hover { transform: translateY(-2px); }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent);
+  }
+
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.4;
+  }
+
+  /* Symptoms list */
+  .symptoms {
+    background: var(--card-bg);
+    border-left: 4px solid var(--accent);
+    padding: 28px 32px;
+    margin: 24px 0;
+  }
+
+  .symptom-item {
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--bg-dark);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .symptom-item:last-child { border-bottom: none; }
+
+  .symptom-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    line-height: 1.7;
+  }
+
+  /* Stages */
+  .stages {
+    counter-reset: stage;
+  }
+
+  .stage {
+    background: var(--card-bg);
+    border: 1px solid var(--bg-dark);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    position: relative;
+    padding-left: 80px;
+    transition: box-shadow 0.2s;
+  }
+
+  .stage:hover {
+    box-shadow: 0 4px 20px var(--shadow);
+  }
+
+  .stage::before {
+    counter-increment: stage;
+    content: counter(stage);
+    position: absolute;
+    left: 24px;
+    top: 22px;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--accent);
+    opacity: 0.3;
+  }
+
+  .stage-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: var(--accent);
+  }
+
+  .stage-desc {
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  /* Testimonial */
+  .testimonial {
+    background: var(--text);
+    color: var(--bg);
+    padding: 40px 36px;
+    margin: 30px 0;
+    position: relative;
+  }
+
+  .testimonial::before {
+    content: '„';
+    font-family: 'Playfair Display', serif;
+    font-size: 120px;
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    opacity: 0.15;
+    line-height: 1;
+  }
+
+  .testimonial p {
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+  }
+
+  .testimonial-author {
+    margin-top: 16px;
+    font-style: normal;
+    font-size: 13px;
+    opacity: 0.6;
+    letter-spacing: 1px;
+  }
+
+  /* CTA / hotline */
+  .hotline {
+    text-align: center;
+    padding: 48px 24px;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--card-bg),
+      var(--card-bg) 12px,
+      var(--bg) 12px,
+      var(--bg) 24px
+    );
+    border: 2px solid var(--accent);
+    margin: 40px 0;
+  }
+
+  .hotline-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .hotline-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(28px, 6vw, 44px);
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+  }
+
+  .hotline-hours {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Test section */
+  .test-question {
+    background: var(--card-bg);
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    border: 1px solid var(--bg-dark);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: background 0.15s;
+  }
+
+  .test-question:hover { background: var(--bg-dark); }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+    margin-top: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--accent);
+    transition: background 0.15s;
+  }
+
+  .checkbox.checked {
+    background: var(--accent);
+    color: white;
+  }
+
+  .test-result {
+    text-align: center;
+    padding: 20px;
+    margin-top: 16px;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--accent);
+    font-weight: 700;
+    display: none;
+  }
+
+  .test-result.visible { display: block; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 40px 0;
+    border-top: 3px double var(--accent);
+    margin-top: 60px;
+  }
+
+  footer p {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .footer-motto {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: 1fr; }
+    .stage { padding-left: 70px; }
+    header { padding: 40px 0 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="org-name">Eesti Saashälvikute Anonüümsed · Asutatud 2019</div>
+    <h1>Saashälve</h1>
+    <div class="subtitle">Kui üks „git init" muutub elustiiliks, mida sa ei suuda enam kontrollida.</div>
+    <div class="est-date">EST. · TALLINN · REG. NR 14200000</div>
+  </header>
+</div>
+
+<div class="warning-banner">
+  ⚠ &nbsp; Rahvatervise hoiatus: Saashälve on tunnistatud kutsehaiguseks alates 2021 &nbsp; ⚠
+</div>
+
+<div class="container">
+
+  <!-- Intro -->
+  <section>
+    <h2><span class="number">I PEATÜKK</span>Mis on saashälve?</h2>
+    <p>
+      Saashälve (lad. <em>deviatio subscriptionis perpetuae</em>) on krooniline vaimne häire, mis avaldub kontrollimatus tungis kirjutada tarkvara kohe pärast esmast idee tekkimist — ilma igasuguse valideerimise, turuuuringu või äriplaaninita.
+    </p>
+    <p>
+      Haigus tabab ebaproportsionaalselt noori, tehnoloogiliselt võimekaid mehi vanuses 19–35, kes on kunagi näinud vähemalt ühte Hacker News postitust või Sam Altmani tweeti. Esimene episood algab tüüpiliselt lausega: <em>„Mul on idee, teen kiirelt MVP ära."</em>
+    </p>
+    <p>
+      MVP-d ei tule kunagi „kiirelt". Ja see polegi MVP.
+    </p>
+  </section>
+
+  <!-- Stats -->
+  <section>
+    <h2><span class="number">II PEATÜKK</span>Saashälve numbrites</h2>
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-number">94%</div>
+        <div class="stat-label">hälvikutest ei ole kunagi kliendiga rääkinud</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">12.7</div>
+        <div class="stat-label">keskmine poolelijäänud projektide arv</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">0€</div>
+        <div class="stat-label">igakuine tulu (mediaan)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Symptoms -->
+  <section>
+    <h2><span class="number">III PEATÜKK</span>Sümptomid</h2>
+    <p>Kui tuvastate enda juures kolm või enam alljärgnevat sümptomit, pöörduge viivitamatult spetsialisti poole:</p>
+    <div class="symptoms">
+      <div class="symptom-item">
+        <span class="symptom-icon">🖥️</span>
+        <span>Ostsite uue domeeni enne, kui teil oli ühtegi klienti. Tegelikult ostsite kolm domeeni — igaks juhuks ka .io ja .dev.</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">🌙</span>
+        <span>Tunnete, et kell 3 öösel on „kõige produktiivsem aeg" ning authentication süsteemi kirjutamine nullist on „hea õppimiskogemus".</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">🍜</span>
+        <span>Toitute ainult nuudlitest ja energiajookidest, kuid nimetate seda „lean startup metoodikaks".</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">📊</span>
+        <span>Teil on Notion workspace 47 lehega, kuid mitte ühtegi tasuvat klienti.</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">🏗️</span>
+        <span>Olete viimased kaks nädalat ehitanud „custom design system'i", sest Tailwind CSS „ei ole piisavalt unikaalne".</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">🗣️</span>
+        <span>Kasutate igapäevases kõnes väljendeid nagu „product-market fit", „ARR" ja „churn rate", kuigi teil pole ühtegi kasutajat.</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">💀</span>
+        <span>Teie viimane suhtlus mittetehnilise inimesega oli 2023. aastal.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stages -->
+  <section>
+    <h2><span class="number">IV PEATÜKK</span>Haiguse staadiumid</h2>
+    <div class="stages">
+      <div class="stage">
+        <div class="stage-title">Valgustus</div>
+        <div class="stage-desc">Idee tuleb duši all, jooksul või kell 2 öösel. Kogu keha on eufoorias. „See on nii lihtne, miks keegi pole seda veel teinud?!" Spoiler: on tehtud. Viis korda.</div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Domeenide ostmine</div>
+        <div class="stage-desc">5 minuti jooksul on ostetud 3 domeeni, loodud GitHub repo ja valitud tech stack. Ärimudeli peale ei ole mõeldud sekunditki. Stripe'i konto on ühendatud siiski „igaks juhuks".</div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Sotsiaalne eraldumine</div>
+        <div class="stage-desc">Haige kaob ühiskonnast. Sõbrad, pere, päikesevalgus — kõik kaotavad tähtsuse. Ainult VS Code ja terminaliaken eksisteerivad. Patsient väidab, et ta „grindib".</div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Infrastruktuurihullus</div>
+        <div class="stage-desc">Patsient kulutab 3 nädalat CI/CD pipeline'i, monitoring süsteemi ja Kubernetes klastri ülesseadmisele rakendusele, millel on 0 kasutajat. „See peab skaleeruma."</div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Landing page'i faas</div>
+        <div class="stage-desc">Patsient disainib landing page'i 2 nädalat. Animatsioonid on perfektsed. Gradient on ideaalne. „Launch" on kohe-kohe. Kliendiga ei ole endiselt keegi rääkinud.</div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Suur launch</div>
+        <div class="stage-desc">Patsient postitab LinkedIn'i: „Thrilled to announce the launch of…" Saab 3 like'i. Üks neist on ema, teine on endine kursusekaaslane, kes ei lugenud postitust, kolmas on Indias elav „growth hacker", kes saadab kohe DM-i.</div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Häbi ja uus idee</div>
+        <div class="stage-desc">Patsient tunnistab vaikselt läbikukkumist, kuid samal hetkel tekib UUS IDEE. Tsükkel algab otsast peale. Domeene on nüüd juba 14.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Epidemic -->
+  <section>
+    <h2><span class="number">IV.II PEATÜKK</span>AI-epideemia: uus laine</h2>
+    <p>
+      Aastatel 2020–2023 püsis saashälve stabiilsel tasemel — haigus oli tõsine, kuid kontrollitav. Siis tuli tehisintellekt.
+    </p>
+    <p>
+      Alates 2023. aastast on saashälve juhtumite arv kasvanud <strong>hinnanguliselt 380%</strong>. Spetsialistid nimetavad seda „AI-kiirendatud saashälveks" ehk <strong>turbohälveks</strong>. Põhjus on lihtne: kui varem pidi saashälvik vähemalt ise koodi kirjutama — mis tekitas loomulikke pause ja peegeldushetki —, siis nüüd genereerib AI terve rakenduse minutitega. Loomulik pidur on kadunud.
+    </p>
+
+    <div class="symptoms" style="border-left-color: var(--warning);">
+      <div class="symptom-item">
+        <span class="symptom-icon">🧠</span>
+        <span><strong>Jumalakompleks.</strong> AI-saashälve kõige ohtlikum sümptom. Patsient genereerib Claude'i või ChatGPT abil töötava prototüübi 20 minutiga ja kogeb intensiivset eufooriat. Tekib tunne, et ta on kõikvõimas — piir inimese ja jumala vahel hägustub. „Ma ehitasin just terve SaaS-i ühe promptiga" on uus „ma jooksin maratoni".</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">⚡</span>
+        <span><strong>Vibe coding.</strong> Patsient ei kirjuta enam koodi — ta „vibe'ib" seda. Kogu rakendus tekib vestluses AI-ga. Patsient ei mõista oma koodi, kuid see „töötab ju". Kuni ei tööta. Siis küsib ta AI-lt, miks ei tööta. Tsükkel kordub.</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">🔥</span>
+        <span><strong>Idee-kiirendus.</strong> Kui varem tekkis uus SaaS-idee kord nädalas, siis AI-ajastul tekib neid mitu korda päevas. Iga vestlus AI-ga sünnib uue „geniaalne äriidee". Domeeniportfell kasvab eksponentsiaalselt.</span>
+      </div>
+      <div class="symptom-item">
+        <span class="symptom-icon">🫠</span>
+        <span><strong>Kompetentsi illusioon.</strong> Patsient usub, et ta „oskab" backendit, frontendi, DevOps'i, disaini JA turundust, sest AI tegi need kõik tema eest ära. Tegelikkuses ei suuda ta ilma AI-ta HTML-faili sulgeda.</span>
+      </div>
+    </div>
+
+    <p>
+      Eriti ohtlik on SaaS + AI kombinatsiooni esmakordne kogemus. Teadlased on dokumenteerinud juhtumeid, kus täiesti terve noor mees avas esimest korda Cursor IDE, genereeris 15 minutiga töötava todo-rakenduse ja ei ole sellest ajast saadik normaalsesse ellu naasnud. Üks Tartu Ülikooli uuring (2025) leidis, et AI-saashälve eufooria on neuroloogiliselt võrreldav sellega, kui leiad 20 eurot taskust, võidad online-pokkeri turniiri ja saad Tinder matchi — kõik samal ajal.
+    </p>
+    <p style="font-style: italic; color: var(--accent); font-weight: 600;">
+      Hoiatus: kui keegi teile ütleb „proovi, kui kiiresti sa Claude'iga terve äppi üles saad", siis see inimene ei ole teie sõber. See on dealer.
+    </p>
+  </section>
+
+  <!-- Testimonial -->
+  <section>
+    <div class="testimonial">
+      <p>Mu nimi on Raimo ja ma olen saashälvik. Alustasin 2020. aastal „lihtsa projektihaldustööriistaga". Praegu on mul 23 domeeni, mass nullist kirjutatud autentimissüsteem ja Kubernetes klaster, mis teenindab mu enda testpäringuid. Mu naine lahkus, kui ma ütlesin, et meie puhkuseraha läheb AWS-i arve katteks. See oli siis, kui ma mõistsin, et mul on probleem.</p>
+      <div class="testimonial-author">— Raimo, 31, Tallinn · Puhas juba 4 kuud (viimane <code>git init</code>: november 2025)</div>
+    </div>
+
+    <div class="testimonial">
+      <p>Ma mõtlesin, et „see kord on teistmoodi". Mul oli idee AI-toega toitumisjälgija jaoks. Kolm kuud hiljem olin ma ehitanud custom machine learning pipeline'i, aga mu rakendus ei osanud endiselt kalorieid lugeda. Mu sõbrad tegid samal ajal Google Sheetsis tabeli ja lahendasid probleemi 10 minutiga.</p>
+      <div class="testimonial-author">— Martin, 27, Tartu · Võitleb endiselt</div>
+    </div>
+
+    <div class="testimonial">
+      <p>Saasisin esimest korda kui olin 18. Sõber näitas mulle Heroku't ja ütles „vaata, kui lihtne". Alguses oli see süütu — väike Flask'i äpp siin, väike landing page seal. Aga siis hakkas vaikselt pihta. Nüüdseks saasin iga päev. Ärkan üles ja esimene mõte on: kas mu deployment läks läbi. Kui ma ei saa saasida, siis muutun kurjaks ja rahutuks. Käed värisevad. Hakkan lihtsalt niisama npm package'e installima, et tunne kätte saada. Mu ema helistas ja küsis, millal ma „päris tööle" lähen. Ma ütlesin, et mul on 4 aktiivset SaaS-i. Tal oli vaikus. Siis küsis, kas ma tahan suppi.</p>
+      <div class="testimonial-author">— Kristo, 24, Pärnu · Aktiivne saasija · Keeldub abist</div>
+    </div>
+  </section>
+
+  <!-- Self-test -->
+  <section>
+    <h2><span class="number">V PEATÜKK</span>Kiire enesekontroll</h2>
+    <p>Vastake ausalt. Iga „jah" toob teid tõele lähemale.</p>
+
+    <div id="test-container">
+      <div class="test-question" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <span>Kas teil on rohkem domeene kui kliente?</span>
+      </div>
+      <div class="test-question" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <span>Kas teie viimane „MVP" võttis üle 3 kuu?</span>
+      </div>
+      <div class="test-question" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <span>Kas olete kunagi öelnud „ma lihtsalt buildin ja siis vaatan"?</span>
+      </div>
+      <div class="test-question" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <span>Kas te alustate uut projekti enne, kui vana on valmis?</span>
+      </div>
+      <div class="test-question" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <span>Kas teie GitHub profiilil on rohkem rohelisi ruute kui teil sotsiaalseid kontakte?</span>
+      </div>
+      <div class="test-question" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <span>Kas olete kunagi nimetanud end „founder'iks" ilma ühtegi eurot teenimata?</span>
+      </div>
+      <div class="test-question" onclick="toggleCheck(this)">
+        <div class="checkbox"></div>
+        <span>Kas teie AWS Free Tier on otsa saanud?</span>
+      </div>
+    </div>
+
+    <div id="test-result" class="test-result"></div>
+  </section>
+
+  <!-- Hotline -->
+  <div class="hotline">
+    <div class="hotline-label">Saashälve Abitelefon</div>
+    <div class="hotline-number">1247-SAAS</div>
+    <div class="hotline-hours">Avatud 24/7 · Anonüümne · Tasuta<br><em>„Ära tee git init. Helista meile."</em></div>
+  </div>
+
+  <!-- 12 steps -->
+  <section>
+    <h2><span class="number">VI PEATÜKK</span>12 sammu programm</h2>
+    <div class="stages">
+      <div class="stage">
+        <div class="stage-title">Tunnistan, et ma ei suuda oma tech stack'i valikut kontrollida.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Usun, et keegi peale minu peaks otsustama, kas idee on hea.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Räägin potentsiaalse kliendiga enne koodi kirjutamist.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Kustutan vähemalt 5 kasutamata domeeni.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Õpin sõna „ei" ütlema uutele ideedele.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Tunnistan, et Kubernetes ei ole MVP jaoks vajalik.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Loon landing page'i ENNE koodi, mitte PÄRAST.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Lõpetan iseenda upvote'imise alt-kontodelt.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Külastan päikesevalgust vähemalt kord päevas.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Ei osta uut domeeni 30 päeva jooksul.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Tunnistan lähedastele, et mu „startup" on hobi.</div>
+        <div class="stage-desc"></div>
+      </div>
+      <div class="stage">
+        <div class="stage-title">Aitan teisi saashälvikuid nende teekonnal.</div>
+        <div class="stage-desc"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-motto">„Esimene samm on tunnistada, et sul ei ole turgu."</div>
+    <p>© 2026 EESTI SAASHÄLVIKUTE ANONÜÜMSED · KÕIK ÕIGUSED KAITSTUD</p>
+    <p style="margin-top: 8px; font-size: 11px; opacity: 0.5;">See lehekülg on ehitatud käsitsi, ilma ühtegi framework'ita. Me oleme uhked.</p>
+  </footer>
+
+</div>
+
+<script>
+  function toggleCheck(el) {
+    const cb = el.querySelector('.checkbox');
+    cb.classList.toggle('checked');
+    cb.textContent = cb.classList.contains('checked') ? '✓' : '';
+    updateResult();
+  }
+
+  function updateResult() {
+    const checked = document.querySelectorAll('.checkbox.checked').length;
+    const total = document.querySelectorAll('.test-question').length;
+    const result = document.getElementById('test-result');
+
+    if (checked === 0) {
+      result.className = 'test-result';
+      return;
+    }
+
+    result.className = 'test-result visible';
+
+    if (checked <= 2) {
+      result.textContent = 'Kerge hälve. Kontrollige oma domeeniportfelli siiski.';
+    } else if (checked <= 4) {
+      result.textContent = 'Mõõdukas saashälve. Soovitame rääkida elava inimesega, kes EI OLE arendaja.';
+    } else if (checked <= 6) {
+      result.textContent = 'Raske saashälve. Palun helistage abitelefoni numbrile 1247-SAAS kohe.';
+    } else {
+      result.textContent = 'Terminaalne saashälve. Teie lähedased on teavitatud. Keegi on teel.';
+    }
+  }
+</script>
+
+</body>
+</html>
